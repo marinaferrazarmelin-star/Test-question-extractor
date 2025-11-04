@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PDF Question Extractor</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <h1>📄 ENEM Question Extractor</h1>
+  <p>Upload your PDF below to extract questions and images automatically.</p>
+
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" accept=".pdf" required />
+    <button type="submit">Upload PDF</button>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("fileInput").files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      message.textContent = "⏳ Uploading...";
+      const res = await fetch("/upload", { method: "POST", body: formData });
+      const data = await res.json();
+
+      message.textContent = data.error
+        ? "❌ " + data.error
+        : `✅ ${data.message} (${data.count} questions processed)`;
+    });
+  </script>
+</body>
+</html>
